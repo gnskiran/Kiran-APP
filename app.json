@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Kiran",
+    "slug": "kiran",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/Kiran_App.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0F172A"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/Kiran_App.png",
+        "backgroundColor": "#0F172A"
+      },
+      "package": "com.kiran.kirandrive"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

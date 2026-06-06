@@ -1,0 +1,164 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isFolder(data) {
+      return data.keys().hasOnly(['folderName', 'parentFolderId', 'createdAt', 'updatedAt', 'deleted']) &&
+        data.folderName is string &&
+        data.folderName.size() > 0 &&
+        data.folderName.size() <= 120 &&
+        (!('parentFolderId' in data) || data.parentFolderId == null || data.parentFolderId is string) &&
+        data.createdAt is string &&
+        data.updatedAt is string &&
+        data.deleted is bool;
+    }
+
+    function isFile(data) {
+      return data.keys().hasOnly([
+          'folderId',
+          'fileName',
+          'fileType',
+          'originalFileSize',
+          'compressedFileSize',
+          'fileUrl',
+          'thumbnailUrl',
+          'storagePath',
+          'textContent',
+          'folderName',
+          'parentFolderName',
+          'folderPath',
+          'createdAt',
+          'updatedAt',
+          'deleted'
+        ]) &&
+        data.fileName is string &&
+        data.fileName.size() > 0 &&
+        data.fileName.size() <= 255 &&
+        data.fileType is string &&
+        (!('folderId' in data) || data.folderId == null || data.folderId is string) &&
+        (!('fileUrl' in data) || data.fileUrl is string) &&
+        (!('thumbnailUrl' in data) || data.thumbnailUrl is string) &&
+        (!('storagePath' in data) || data.storagePath is string) &&
+        (!('textContent' in data) || data.textContent is string) &&
+        (!('folderName' in data) || data.folderName == null || data.folderName is string) &&
+        (!('parentFolderName' in data) || data.parentFolderName == null || data.parentFolderName is string) &&
+        (!('folderPath' in data) || data.folderPath == null || data.folderPath is string) &&
+        data.originalFileSize is number &&
+        data.compressedFileSize is number &&
+        data.createdAt is string &&
+        data.updatedAt is string &&
+        data.deleted is bool;
+    }
+
+    function isLink(data) {
+      return data.keys().hasOnly(['folderId', 'title', 'url', 'notes', 'createdAt', 'updatedAt', 'deleted']) &&
+        data.title is string &&
+        data.title.size() > 0 &&
+        data.title.size() <= 160 &&
+        data.url is string &&
+        data.url.size() > 0 &&
+        (!('folderId' in data) || data.folderId == null || data.folderId is string) &&
+        (!('notes' in data) || data.notes is string) &&
+        data.createdAt is string &&
+        data.updatedAt is string &&
+        data.deleted is bool;
+    }
+
+    function isPassword(data) {
+      return data.keys().hasOnly(['folderId', 'title', 'website', 'username', 'password', 'notes', 'createdAt', 'updatedAt', 'deleted']) &&
+        data.title is string &&
+        data.title.size() > 0 &&
+        data.title.size() <= 160 &&
+        data.username is string &&
+        data.username.size() > 0 &&
+        data.password is string &&
+        data.password.size() > 0 &&
+        (!('folderId' in data) || data.folderId == null || data.folderId is string) &&
+        (!('website' in data) || data.website is string) &&
+        (!('notes' in data) || data.notes is string) &&
+        data.createdAt is string &&
+        data.updatedAt is string &&
+        data.deleted is bool;
+    }
+
+    match /folders/{docId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && isFolder(request.resource.data);
+      allow delete: if signedIn();
+    }
+
+    match /files/{docId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && isFile(request.resource.data);
+      allow delete: if signedIn();
+    }
+
+    match /images/{docId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && isFile(request.resource.data);
+      allow delete: if signedIn();
+    }
+
+    match /pdfs/{docId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && isFile(request.resource.data);
+      allow delete: if signedIn();
+    }
+
+    match /links/{docId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && isLink(request.resource.data);
+      allow delete: if signedIn();
+    }
+
+    function isTask(data) {
+      return data.keys().hasOnly([
+          'taskName',
+          'taskDescription',
+          'status',
+          'priority',
+          'createdDate',
+          'dueDate',
+          'reminderEnabled',
+          'reminderDateTime',
+          'reminderDate',
+          'reminderTime',
+          'relatedFolderId',
+          'createdAt',
+          'updatedAt',
+          'deleted'
+        ]) &&
+        data.taskName is string &&
+        data.taskName.size() > 0 &&
+        data.taskName.size() <= 200 &&
+        (!('taskDescription' in data) || data.taskDescription is string) &&
+        data.status is string &&
+        data.priority is string &&
+        data.createdDate is string &&
+        data.dueDate is string &&
+        data.reminderEnabled is bool &&
+        (!('reminderDateTime' in data) || data.reminderDateTime is string) &&
+        (!('reminderDate' in data) || data.reminderDate is string) &&
+        (!('reminderTime' in data) || data.reminderTime is string) &&
+        (!('relatedFolderId' in data) || data.relatedFolderId is string) &&
+        data.createdAt is string &&
+        data.updatedAt is string &&
+        data.deleted is bool;
+    }
+
+    match /passwords/{docId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && isPassword(request.resource.data);
+      allow delete: if signedIn();
+    }
+
+    match /tasks/{docId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && isTask(request.resource.data);
+      allow delete: if signedIn();
+    }
+  }
+}

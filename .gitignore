@@ -1,0 +1,41 @@
+.env
+.env.*
+!.env.example
+
+# Firebase client config and admin credentials
+android/app/google-services.json
+ios/GoogleService-Info.plist
+serviceAccount*.json
+firebase-admin*.json
+
+# Android signing and key material
+*.jks
+*.keystore
+*.p12
+*.pem
+*.key
+
+# Local machine/build secrets
+android/local.properties
+
+node_modules/
+gradle-user-home/
+.gradle/
+android/.gradle/
+android/build/
+android/app/build/
+build/
+dist/
+.expo/
+.expo-shared/
+
+*.apk
+*.aab
+
+.env
+.env.local
+.env.production
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

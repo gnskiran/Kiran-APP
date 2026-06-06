@@ -1,0 +1,21 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    match /kiran-drive/{category}/{docId}/{fileName} {
+      allow read: if signedIn();
+      allow write: if signedIn()
+        && category in ['images', 'pdfs', 'documents']
+        && request.resource != null
+        && request.resource.size < 25 * 1024 * 1024;
+      allow delete: if signedIn();
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
